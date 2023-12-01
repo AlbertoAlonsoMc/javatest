@@ -4,6 +4,7 @@ import com.generalsw.javatest.model.mapper.PriceMapper;
 import com.generalsw.javatest.model.dto.PriceOutputDto;
 import com.generalsw.javatest.repository.PriceRepository;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -24,13 +25,14 @@ public class PriceServiceTest {
     @Autowired
     private PriceMapper priceMapper;
 
-    private static List<LocalDateTime> testDates;
-    private static Long productId;
-    private static Long brandId;
+    private static List<LocalDateTime> givenDates;
+    private static Long givenProductId;
+    private static Long givenBrandId;
+    private static List<List<PriceOutputDto>> listOfFoundPrices;
 
     @BeforeAll
-    static void setUp() {
-        testDates = List.of(
+    static void setUpBeforeAll() {
+        givenDates = List.of(
                 LocalDateTime.of(2020, 6, 14, 10, 0),
                 LocalDateTime.of(2020, 6, 14, 16, 0),
                 LocalDateTime.of(2020, 6, 14, 21, 0),
@@ -38,72 +40,82 @@ public class PriceServiceTest {
                 LocalDateTime.of(2020, 6, 16, 21, 0)
         );
 
-        productId = 35455L;
-        brandId = 1L;
+        givenProductId = 35455L;
+        givenBrandId = 1L;
+    }
+
+    @BeforeEach
+    void setUpBeforeEach() {
+        listOfFoundPrices = List.of(
+                priceRepository.findByParams(givenDates.get(0), givenProductId, givenBrandId).stream().map(priceMapper::toPriceOutputDto).toList(),
+                priceRepository.findByParams(givenDates.get(1), givenProductId, givenBrandId).stream().map(priceMapper::toPriceOutputDto).toList(),
+                priceRepository.findByParams(givenDates.get(2), givenProductId, givenBrandId).stream().map(priceMapper::toPriceOutputDto).toList(),
+                priceRepository.findByParams(givenDates.get(3), givenProductId, givenBrandId).stream().map(priceMapper::toPriceOutputDto).toList(),
+                priceRepository.findByParams(givenDates.get(4), givenProductId, givenBrandId).stream().map(priceMapper::toPriceOutputDto).toList()
+        );
     }
 
     @Test
-    void findByParams_returnsAccuratePrices() {
-        List<PriceOutputDto> pricesFoundDate1 = priceRepository.findByParams(testDates.get(0), productId, brandId).stream().map(priceMapper::toPriceOutputDto).toList();
-        List<PriceOutputDto> pricesFoundDate2 = priceRepository.findByParams(testDates.get(1), productId, brandId).stream().map(priceMapper::toPriceOutputDto).toList();
-        List<PriceOutputDto> pricesFoundDate3 = priceRepository.findByParams(testDates.get(2), productId, brandId).stream().map(priceMapper::toPriceOutputDto).toList();
-        List<PriceOutputDto> pricesFoundDate4 = priceRepository.findByParams(testDates.get(3), productId, brandId).stream().map(priceMapper::toPriceOutputDto).toList();
-        List<PriceOutputDto> pricesFoundDate5 = priceRepository.findByParams(testDates.get(4), productId, brandId).stream().map(priceMapper::toPriceOutputDto).toList();
-
-        //Assertion of AMOUNT  of received results
-        assertEquals(1, pricesFoundDate1.size()); //Data example 1
-        assertEquals(2, pricesFoundDate2.size()); //Data example 2
-        assertEquals(1, pricesFoundDate3.size()); //Data example 3
-        assertEquals(2, pricesFoundDate4.size()); //Data example 4
-        assertEquals(2, pricesFoundDate5.size()); //Data example 5
-
-
-        //Assertion of DATE between range of dates (private method)
-        assertDateRange(testDates.get(0), pricesFoundDate1.get(0).getStartDate(), pricesFoundDate1.get(0).getEndDate()); //Data example 1
-
-        assertDateRange(testDates.get(1), pricesFoundDate2.get(0).getStartDate(), pricesFoundDate2.get(0).getEndDate()); //Data example 2
-        assertDateRange(testDates.get(1), pricesFoundDate2.get(1).getStartDate(), pricesFoundDate2.get(1).getEndDate()); //Data example 2
-
-        assertDateRange(testDates.get(2), pricesFoundDate3.get(0).getStartDate(), pricesFoundDate3.get(0).getEndDate()); //Data example 3
-
-        assertDateRange(testDates.get(3), pricesFoundDate4.get(0).getStartDate(), pricesFoundDate4.get(0).getEndDate()); //Data example 4
-        assertDateRange(testDates.get(3), pricesFoundDate4.get(1).getStartDate(), pricesFoundDate4.get(1).getEndDate()); //Data example 4
-
-        assertDateRange(testDates.get(4), pricesFoundDate5.get(0).getStartDate(), pricesFoundDate5.get(0).getEndDate()); //Data example 5
-        assertDateRange(testDates.get(4), pricesFoundDate5.get(1).getStartDate(), pricesFoundDate5.get(1).getEndDate()); //Data example 5
-
-
-        //Assertion of PRODUCT ID
-        assertEquals(35455, pricesFoundDate1.get(0).getProductId()); //Data example 1
-
-        assertEquals(35455, pricesFoundDate2.get(0).getProductId()); //Data example 2
-        assertEquals(35455, pricesFoundDate2.get(1).getProductId()); //Data example 2
-
-        assertEquals(35455, pricesFoundDate3.get(0).getProductId()); //Data example 3
-
-        assertEquals(35455, pricesFoundDate4.get(0).getProductId()); //Data example 4
-        assertEquals(35455, pricesFoundDate4.get(1).getProductId()); //Data example 4
-
-        assertEquals(35455, pricesFoundDate5.get(0).getProductId()); //Data example 5
-        assertEquals(35455, pricesFoundDate5.get(1).getProductId()); //Data example 5
-
-
-        //Assertion of product BRAND ID
-        assertEquals(1, pricesFoundDate1.get(0).getBrandId()); //Data example 1
-
-        assertEquals(1, pricesFoundDate2.get(0).getBrandId()); //Data example 2
-        assertEquals(1, pricesFoundDate2.get(1).getBrandId()); //Data example 2
-
-        assertEquals(1, pricesFoundDate3.get(0).getBrandId()); //Data example 3
-
-        assertEquals(1, pricesFoundDate4.get(0).getBrandId()); //Data example 4
-        assertEquals(1, pricesFoundDate4.get(1).getBrandId()); //Data example 4
-
-        assertEquals(1, pricesFoundDate5.get(0).getBrandId()); //Data example 5
-        assertEquals(1, pricesFoundDate5.get(1).getBrandId()); //Data example 5
+    void assertionOfAmountReceivedResults() {
+        assertAmountReceivedResults();
     }
 
-    private void assertDateRange(LocalDateTime date, LocalDateTime initialDate, LocalDateTime endDate) {
-        assertTrue(date.isAfter(initialDate) && date.isBefore(endDate));
+    @Test
+    void assertionOfDatesBetweenRanges() {
+        assertDateRanges();
+    }
+
+    @Test
+    void assertionOfProductIds() {
+        assertProductIds(35455L);
+    }
+
+    @Test
+    void assertionOfBrandIds() {
+        assertBrandIds(1L);
+    }
+
+
+    /*--------------------------DINAMIC ITERATION METHODS OVER ALL RESULTS--------------------------*/
+    private void assertAmountReceivedResults() {
+        for (int i = 0; i < listOfFoundPrices.size(); i++) {
+            switch (i) {
+                case 0, 2:
+                    assertEquals(1, listOfFoundPrices.get(i).size());
+                    break;
+                case 1, 3, 4:
+                    assertEquals(2, listOfFoundPrices.get(i).size());
+                    break;
+                default:
+            }
+        }
+    }
+
+    private void assertDateRanges() {
+        for (int i = 0; i < listOfFoundPrices.size(); i++) {
+            for (int j = 0; i < listOfFoundPrices.get(i).size(); i++) {
+                assertTrue(givenDates.get(i).
+                        isAfter(listOfFoundPrices.get(i).get(j).getStartDate()) && givenDates.get(i).
+                        isBefore(listOfFoundPrices.get(i).get(j).getEndDate()));
+            }
+        }
+    }
+
+    private void assertProductIds(Long productId) {
+        for (List<PriceOutputDto> pricesFound : listOfFoundPrices
+        ) {
+            for (PriceOutputDto priceOutputDto : pricesFound) {
+                assertEquals(productId, priceOutputDto.getProductId());
+            }
+        }
+    }
+
+    private void assertBrandIds(Long brandId) {
+        for (List<PriceOutputDto> pricesFound : listOfFoundPrices
+        ) {
+            for (PriceOutputDto priceOutputDto : pricesFound) {
+                assertEquals(brandId, priceOutputDto.getBrandId());
+            }
+        }
     }
 }
