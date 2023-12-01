@@ -7,5 +7,4 @@ import java.util.List;
 
 public interface PriceService {
     List<PriceOutputDto> findPriceByParams(LocalDateTime applicationDate, Long productId, Long brandId);
-    List<PriceOutputDto> fetchAll();
 }
