@@ -93,7 +93,7 @@ public class PriceServiceTest {
 
     private void assertDateRanges() {
         for (int i = 0; i < listOfFoundPrices.size(); i++) {
-            for (int j = 0; i < listOfFoundPrices.get(i).size(); i++) {
+            for (int j = 0; j < listOfFoundPrices.get(i).size(); j++) {
                 assertTrue(givenDates.get(i).
                         isAfter(listOfFoundPrices.get(i).get(j).getStartDate()) && givenDates.get(i).
                         isBefore(listOfFoundPrices.get(i).get(j).getEndDate()));
