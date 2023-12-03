@@ -30,7 +30,7 @@ public class PriceServiceTest {
     private static Long givenBrandId;
     private static List<List<PriceOutputDto>> listOfFoundPrices;
 
-    @BeforeAll
+    @BeforeAll //Initialization of example data for all tests
     static void setUpBeforeAll() {
         givenDates = List.of(
                 LocalDateTime.of(2020, 6, 14, 10, 0),
@@ -45,6 +45,7 @@ public class PriceServiceTest {
     }
 
     @BeforeEach
+        //Initialization of found data at every single test.
     void setUpBeforeEach() {
         listOfFoundPrices = List.of(
                 priceRepository.findByParams(givenDates.get(0), givenProductId, givenBrandId).stream().map(priceMapper::toPriceOutputDto).toList(),
@@ -55,6 +56,7 @@ public class PriceServiceTest {
         );
     }
 
+    /*--------------------------ASSERTIONS (PERSONALIZED METHODS)--------------------------*/
     @Test
     void assertionOfAmountReceivedResults() {
         assertAmountReceivedResults();
@@ -78,7 +80,7 @@ public class PriceServiceTest {
 
     /*--------------------------DINAMIC ITERATION METHODS OVER ALL RESULTS--------------------------*/
     private void assertAmountReceivedResults() {
-        for (int i = 0; i < listOfFoundPrices.size(); i++) {
+        for (int i = 0; i < listOfFoundPrices.size(); i++) { //Loop iteration over the list of all lists of prices
             switch (i) {
                 case 0, 2:
                     assertEquals(1, listOfFoundPrices.get(i).size());
@@ -92,8 +94,8 @@ public class PriceServiceTest {
     }
 
     private void assertDateRanges() {
-        for (int i = 0; i < listOfFoundPrices.size(); i++) {
-            for (int j = 0; j < listOfFoundPrices.get(i).size(); j++) {
+        for (int i = 0; i < listOfFoundPrices.size(); i++) { //Loop iteration over the list of all lists of prices
+            for (int j = 0; j < listOfFoundPrices.get(i).size(); j++) { //Loop iteration over each list
                 assertTrue(givenDates.get(i).
                         isAfter(listOfFoundPrices.get(i).get(j).getStartDate()) && givenDates.get(i).
                         isBefore(listOfFoundPrices.get(i).get(j).getEndDate()));
@@ -102,18 +104,16 @@ public class PriceServiceTest {
     }
 
     private void assertProductIds(Long productId) {
-        for (List<PriceOutputDto> pricesFound : listOfFoundPrices
-        ) {
-            for (PriceOutputDto priceOutputDto : pricesFound) {
+        for (List<PriceOutputDto> pricesFound : listOfFoundPrices) { //Loop iteration over the list of all lists of prices
+            for (PriceOutputDto priceOutputDto : pricesFound) { //Loop iteration over each list
                 assertEquals(productId, priceOutputDto.getProductId());
             }
         }
     }
 
     private void assertBrandIds(Long brandId) {
-        for (List<PriceOutputDto> pricesFound : listOfFoundPrices
-        ) {
-            for (PriceOutputDto priceOutputDto : pricesFound) {
+        for (List<PriceOutputDto> pricesFound : listOfFoundPrices) { //Loop iteration over the list of all lists of prices
+            for (PriceOutputDto priceOutputDto : pricesFound) { //Loop iteration over each list
                 assertEquals(brandId, priceOutputDto.getBrandId());
             }
         }

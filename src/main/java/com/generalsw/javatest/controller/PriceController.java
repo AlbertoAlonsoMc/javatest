@@ -16,9 +16,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/prices")
-@RequiredArgsConstructor
+@RequiredArgsConstructor //Constructor tag (for dependency injection)
 public class PriceController {
 
+    //Declared as final because of the dependency injection by @RequiredArgsConstructor
     private final PriceService priceService;
 
     @GetMapping("/findPrice")

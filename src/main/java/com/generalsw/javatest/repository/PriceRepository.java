@@ -11,6 +11,7 @@ import java.util.List;
 
 @Repository
 public interface PriceRepository extends JpaRepository<Price, Long> {
+    //This query fetches all results by parameterized args and orders results by the priority attribute.
     @Query("SELECT p FROM Price p " +
             "WHERE p.productId = :productId " +
             "AND p.brandId = :brandId " +

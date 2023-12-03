@@ -11,9 +11,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor //Constructor tag (for dependency injection)
 public class PriceServiceImpl implements PriceService {
 
+    //Declared as final because of the dependency injection by @RequiredArgsConstructor
     private final PriceRepository priceRepository;
     private final PriceMapper priceMapper;
 
