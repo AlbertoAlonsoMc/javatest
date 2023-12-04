@@ -24,6 +24,14 @@ Nos encontramos con las siguiente estructura de carpetas y archivos importantes 
 ## Instrucciones de ejecución
 Para arrancar el servicio, basta con ejecutarlo desde la clase PruebaTecnicaApplication.java
 
+Una vez arrancado, habría que realizar una llamada al endpoint ("prices/findPrice") con sus respectivos parámetros de entrada. Los parámetros son los siguientes:
+- applicationDate: Fecha de búsqueda (formato "YYYY-MM-DD-hh.mm.ss).
+- productId: ID del producto.
+- brandId: ID de la cadena.
+
+Un ejemplo de una llamada al endpoint sería este:  
+localhost:8080/prices/findPrice?applicationDate=2020-06-14-16.31.00&productId=35455&brandId=1
+
 ## Notas importantes
 Cabe destacar tres aspectos importantes:
 * Inyección de dependencias: Haciendo uso de buenas prácticas, se evita el uso de **@Autowired** y se opta por la inyección por constructor. Esto se hace mediante el uso de la etiqueta **@RequiredArgsConstructor** y el modificador **final**.
